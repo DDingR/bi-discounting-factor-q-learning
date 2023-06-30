@@ -20,7 +20,7 @@ rep_num = 1;
 [episode_num, data_num] = size(data_ori);
 case_num = data_num / rep_num;
 
-data = data_ori;
+data = data_ori(1:400,:);
 
 % 
 % data = zeros(episode_num, case_num);
@@ -32,8 +32,8 @@ data = data_ori;
 % data = [data(:,1) data(:,13) data(:,21) data(:,31)]
 
 %%
-avg_range = 50;
-smooth_range = 50;
+avg_range = 15;
+smooth_range = 3;
 
 % color = ['r','k','b', 'g', ''];
 data_legend = ["gamma0.1", "gamma0.2", "gamma0.5", "eps-greedy"];
