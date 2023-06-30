@@ -36,8 +36,8 @@ avg_range = 20;
 smooth_range = 25;
 
 % color = ['r','k','b', 'g', ''];
-% data_legend = ["epsilon greedy", "small gamma", "large gamma"];
-data_legend = string(1:1:case_num);
+data_legend = ["gamma0.1", "gamma0.2", "gamma0.5", "eps-greedy"];
+% data_legend = string(1:1:case_num);
 %%
 
 data_smooth = zeros(size(data_ori));
@@ -71,9 +71,9 @@ ylabel("reward")
 legend(data_legend, "location", "southeast")
 
 %%
-plt_list = ["gamma 0.1", "gamma 0.2", "gamma 0.5", "eps-greedy"];
+plt_list = ["gamma0.1", "gamma0.2", "gamma0.5", "eps-greedy", "tt"];
 
-for j = 1:1:eps 0.1
+for j = 1:1:5
     plt = figure(j);
 %     saveas(plt, plt_list(j) + '.png')
 %     imwrite()
