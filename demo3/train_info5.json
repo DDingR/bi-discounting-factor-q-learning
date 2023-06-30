@@ -1,0 +1,28 @@
+{
+	"TRAIN_INFO": {
+		"TRAIN_NAME": "test_train5_ep0",
+		"ENV_NAME": "Pendulum-v1",
+
+		"EPISODE_NUM": "250",
+
+		"OBS_NUM": "3",
+		"ACT_QUANT_NUM": "10",
+
+		"MEMORY_SIZE": "10000",
+
+		"TRAIN_REPEAT": "1"
+	},
+
+
+	"TRAIN_CASE": [
+		{
+			"TRAIN_CASE": "1",
+			"TRAIN_AGENT_NUM": "1",
+			"EPSILON": "0",
+			"GAMMA": [
+				"0.99"
+			],
+			"OTHER_GAMMA": "0.99"		
+		}
+	]
+}

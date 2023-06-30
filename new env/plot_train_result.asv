@@ -1,0 +1,63 @@
+clear
+close all
+%%
+TRAIN_NAME = "test_train3";
+
+root_dir = "results/" + TRAIN_NAME;
+root_info = dir(root_dir);
+root_num = length(root_info);
+
+%%
+data = [];
+for j = 3:root_num
+    tmp = readtable(root_dir + "/" + root_info(j).name);
+    tmp = table2array(tmp);
+    tmp = tmp(:,1);
+    data = [data tmp];
+end
+
+% data = [mean(data(:,1:10),2) mean(data(:,11:20),2) mean(data(:,21:30),2) mean(data(:,31:40),2)]
+data = [data(:,1) data(:,11) data(:,21) data()]
+
+%%
+[episode_num, case_num] = size(data);
+avg_range = 5;
+
+color = ['r','k','b', 'g'];
+% data_legend = ["epsilon greedy", "small gamma", "large gamma"];
+data_legend = string(1:1:case_num);
+%%
+data_var = var(data)
+
+for j = 1:1:case_num
+    figure(j)
+    plot(data(:,j), color(j))
+    xlabel("train episode")
+    ylabel("reward") 
+    xlim([0 episode_num])
+    ylim([-2000 100])
+    legend(data_legend(j), "location", "southeast")
+end
+
+figure(case_num+1)
+for j = 1:1:case_num
+    plot(smooth(data(:,j), avg_range), color(j))
+    hold on
+end
+xlabel("train episode")
+ylabel("reward")
+legend(data_legend, "location", "southeast")
+
+% %%
+% plt_list = ["eps", "small", "large", "smooth"];
+% 
+% for j = 1:1:4
+%     plt = figure(j);
+% %     saveas(plt, plt_list(j) + '.png')
+% %     imwrite()
+%     exportgraphics(plt,plt_list(j) +'.eps')
+% end
+% 
+% %%
+% 
+% data_smooth(end,:)

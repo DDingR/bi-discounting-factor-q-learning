@@ -1,0 +1,28 @@
+{
+	"TRAIN_INFO": {
+		"TRAIN_NAME": "test_train1",
+		"ENV_NAME": "CliffWalking-v0",
+
+		"EPISODE_NUM": "5000",
+
+		"OBS_NUM": "1",
+		"ACT_QUANT_NUM": "4",
+
+		"MEMORY_SIZE": "10000",
+
+		"TRAIN_REPEAT": "1"
+	},
+
+
+	"TRAIN_CASE": [
+		{
+			"TRAIN_CASE": "1",
+			"TRAIN_AGENT_NUM": "3",
+			"EPSILON": "0.9",
+			"GAMMA": [
+				"0.99"
+			],
+			"OTHER_GAMMA": "0."		
+		}
+	]
+}

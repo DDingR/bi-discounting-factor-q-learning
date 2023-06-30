@@ -223,7 +223,8 @@ class DQNagent():
 
         next_state_values = torch.zeros(self.BATCH_SIZE, device=self.device)
         with torch.no_grad():
-            next_state_values[non_final_mask] = agent.target_net(non_final_next_states).max(1)[0]
+            next_actions = agent.target_net(non_final_next_states).max(1)[1]
+            next_state_values[non_final_mask] = agent.target_net(non_final_next_states)[range(len(non_final_next_states)), next_actions]
         # Compute the expected Q values
         expected_state_action_values = (next_state_values * self.GAMMA) + reward_batch
 
