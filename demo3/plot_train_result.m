@@ -1,7 +1,7 @@
 clear
 close all
 %%
-TRAIN_NAME = "test_train1";
+TRAIN_NAME = "test_train3_eg_0.2";
 
 root_dir = "results/" + TRAIN_NAME;
 root_info = dir(root_dir);
@@ -20,7 +20,8 @@ rep_num = 1;
 [episode_num, data_num] = size(data_ori);
 case_num = data_num / rep_num;
 
-data = data_ori(1:400,:);
+% data = data_ori(1:400,:);
+data = data_ori;
 
 % 
 % data = zeros(episode_num, case_num);
@@ -32,11 +33,11 @@ data = data_ori(1:400,:);
 % data = [data(:,1) data(:,13) data(:,21) data(:,31)]
 
 %%
-avg_range = 15;
+avg_range = 30;
 smooth_range = 3;
 
-% color = ['r','k','b', 'g', ''];
-data_legend = ["gamma0.1", "gamma0.2", "gamma0.5", "eps-greedy"];
+color = ['r','g','k', 'c', 'm','b'];
+data_legend = ["e g", "gamma 0.01", "gamma 0.25", "gamma 0.5", "gamma 0.75", "gamma 0.99"];
 % data_legend = string(1:1:case_num);
 %%
 
@@ -62,24 +63,29 @@ for j = 1:1:case_num
 end
 
 figure(case_num+1)
-for j = 1:1:case_num
-    plot(smooth(data(:,j), avg_range)) %, color(j))
+for j = 2:1:case_num
+    plot(smooth(data(:,j), avg_range) , color(j))
     hold on
 end
 xlabel("train episode")
 ylabel("reward")
-legend(data_legend, "location", "southeast")
+legend(data_legend(2:end), "location", "southeast")
+
+figure(case_num+2)
+plot(smooth(data(:,1), avg_range), 'r') %, color(j))
+    hold on
+plot(smooth(data(:,end), avg_range), 'b') %, color(j))
+
+xlabel("train episode")
+ylabel("reward")
+legend(["eps-greedy", "gamma 0.99"], "location", "southeast")
 
 %%
-plt_list = ["gamma0.1", "gamma0.2", "gamma0.5", "eps-greedy", "tt"];
+plt_list = ["1","2","3","4","5","6","var gamma", "eps vs pp"];
 
-for j = 1:1:5
+for j = 7:1:8
     plt = figure(j);
 %     saveas(plt, plt_list(j) + '.png')
 %     imwrite()
     exportgraphics(plt,plt_list(j) +'.eps')
 end
-
-%%
-
-data_smooth(end,:)

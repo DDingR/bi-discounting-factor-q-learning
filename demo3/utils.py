@@ -35,8 +35,8 @@ class DQNagent():
         self.device = device
 
         self.EPS_START = epsilon
-        self.EPS_END = 0.1
-        self.EPS_DECAY = 100
+        self.EPS_END = 0.01
+        self.EPS_DECAY = 500
 
         self.action_list = action_list
         self.env = gym.make(ENV_NAME)
@@ -53,12 +53,12 @@ class DQNagent():
 
         self.optimizer = optim.AdamW(self.policy_net.parameters(), lr=self.LR, amsgrad=True)
 
-        self.steps_done = None
+        self.steps_done = 0
 
     def reset(self):
-        self.steps_done = 0
         self.state, _ = self.env.reset()
         self.state = torch.tensor(self.state, dtype=torch.float32, device=self.device).unsqueeze(0)
+        self.steps_done = self.steps_done + 1
 
     def train(self, memory, agent):
         self.Transition = namedtuple('Transition',
@@ -108,8 +108,6 @@ class DQNagent():
         else:
             eps_threshold = 0
         # eps_threshold = self.EPS_START
-
-        self.steps_done += 1
 
         if sample > eps_threshold:    # if eps_threshold = 0 always 
             with torch.no_grad():
