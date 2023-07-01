@@ -16,7 +16,7 @@
 
 	"TRAIN_CASE": [
 		{
-			"TRAIN_CASE": "0",
+			"TRAIN_CASE": "6",
 			"TRAIN_AGENT_NUM": "2",
 			"EPSILON": "0.9",
 			"GAMMA": [

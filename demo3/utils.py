@@ -36,7 +36,7 @@ class DQNagent():
 
         self.EPS_START = epsilon
         self.EPS_END = 0.01
-        self.EPS_DECAY = 500
+        self.EPS_DECAY = 800
 
         self.action_list = action_list
         self.env = gym.make(ENV_NAME)
