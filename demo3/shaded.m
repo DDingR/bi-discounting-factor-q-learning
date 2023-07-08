@@ -1,7 +1,7 @@
 clear
 close all
 %%
-TRAIN_NAME = "test_train6";
+TRAIN_NAME = "test_train8";
 
 root_dir = "results/" + TRAIN_NAME;
 root_info = dir(root_dir);

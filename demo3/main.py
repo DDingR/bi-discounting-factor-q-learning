@@ -3,6 +3,7 @@ import json
 import csv
 import os
 
+import time
 import numpy as np
 
 from utils import *
@@ -50,6 +51,8 @@ def main(train_info, train_case, reporter, repeat_num):
 
     memory = ReplayMemory(MEMORY_SIZE)
 
+    ADVISE_RATE = 0.2
+
     try:
         for i_episode in range(EPISODE_NUM):
             # initialization 
@@ -61,24 +64,31 @@ def main(train_info, train_case, reporter, repeat_num):
                 agent.reset()
 
             for t in count():
-                for j, agent in enumerate(agent_list):
-                    done, reward = agent.train(memory, agent)
+			
+                if len(agent_list) == 1:
+                    done, reward = agent_list[0].train(memory, agent_list[0])
 
-                    dones[j] = done
-                    rewards[j] = reward
+                    dones[0] = done
+                    rewards[0] = reward
+                else:
+                    if ADVISE_RATE > random.random():
+                        done0, reward0 = agent_list[0].train(memory, agent_list[1])
+                        done1, reward1 = agent_list[1].train(memory, agent_list[0])
+                        
+                        dones = [done0, done1]
+                        rewards = [reward0, reward1]
+                    else:
+                        done0, reward0 = agent_list[0].train(memory, agent_list[0])
+                        done1, reward1 = agent_list[1].train(memory, agent_list[1])
 
-                # if advice_prob > random.random():
-                #     done1, reward1 = agent_list[1].train(memory[1], agent_list[2])
-                #     done2, reward2 = agent_list[2].train(memory[1], agent_list[1])
-                # else:
-                #     done1, reward1 = agent_list[1].train(memory[1], agent_list[1])
-                #     done2, reward2 = agent_list[2].train(memory[1], agent_list[2])
+                        dones = [done0, done1]
+                        rewards = [reward0, reward1]
 
                 reward_sum = [reward_sum[l] + rewards[l] for l in range(TRAIN_AGENT_NUM)]
                 all_done = (sum(dones) == len(dones))
 
                 if all_done:
-                    reporter.info(f"EPISODE {i_episode} \t| REWARD {np.round(reward_sum, 3)} \t| STEP {t}")
+                    # reporter.info(f"EPISODE {i_episode} \t| REWARD {np.round(reward_sum, 3)} \t| STEP {t}")
                     result_writer.writerow(reward_sum)
                     break
     finally:
@@ -104,4 +114,9 @@ if __name__ == "__main__":
     for j, train_case in enumerate(train_info_file["TRAIN_CASE"]):
         for k in range(TRAIN_REPEAT):
             reporter.info(f"train_case: {j}")
+            
+            start = time.time()
             main(train_info, train_case, reporter, k)
+            end = time.time()
+
+            reporter.info(f" {end-start}")
