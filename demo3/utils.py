@@ -35,7 +35,7 @@ class DQNagent():
         self.device = device
 
         self.EPS_START = epsilon
-        self.EPS_END = 0.2
+        self.EPS_END = 0.01
         self.EPS_DECAY = 250
 
         self.action_list = action_list
@@ -49,11 +49,23 @@ class DQNagent():
         self.policy_net = DQN(self.n_observations, self.n_actions).to(self.device)
         self.target_net = DQN(self.n_observations, self.n_actions).to(self.device)  
             
+
         self.target_net.load_state_dict(self.policy_net.state_dict())
 
         self.optimizer = optim.AdamW(self.policy_net.parameters(), lr=self.LR, amsgrad=True)
 
         self.steps_done = 0
+
+    def saveONNX(self, episode, onnx_path):
+        onnx_name = onnx_path + episode + ".onnx"
+        self.policy_net.eval()
+        dummy_input = torch.randn(1,self.n_observations,device=self.device, requires_grad=True)
+        torch.onnx.export(
+            self.policy_net,
+            dummy_input,
+            onnx_name,
+            verbose=False
+        )
 
     def reset(self):
         self.state, _ = self.env.reset()

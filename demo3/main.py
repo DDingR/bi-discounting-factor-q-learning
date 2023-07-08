@@ -48,6 +48,9 @@ def main(train_info, train_case, reporter, repeat_num):
         agent_list.append(
             DQNagent(OBS_NUM, action_list, ENV_NAME, device, EPSILON, gamma)
         )
+    
+    for i, agent in enumerate(agent_list):
+        agent.saveONNX(TRAIN_CASE + "_" + str(repeat_num)  + "_" + str(i) + "_start", "./onnx/" +  TRAIN_NAME + "/")
 
     memory = ReplayMemory(MEMORY_SIZE)
 
@@ -92,6 +95,10 @@ def main(train_info, train_case, reporter, repeat_num):
                     result_writer.writerow(reward_sum)
                     break
     finally:
+
+        for i, agent in enumerate(agent_list):
+            agent.saveONNX(TRAIN_CASE + "_" + str(repeat_num) + "_"  + str(i) + "_end", "./onnx/" +  TRAIN_NAME + "/")
+
         result_file.close()
         reporter.info('Complete')
 

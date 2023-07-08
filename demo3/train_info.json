@@ -1,6 +1,6 @@
 {
 	"TRAIN_INFO": {
-		"TRAIN_NAME": "test_train8",
+		"TRAIN_NAME": "test_train9",
 		"ENV_NAME": "Pendulum-v1",
 
 		"EPISODE_NUM": "1000",
@@ -50,6 +50,51 @@
 				"0.99"
 			],
 			"OTHER_GAMMA": "0.99"		
-		}				
+		},	
+		{
+			"TRAIN_CASE": "4",
+			"TRAIN_AGENT_NUM": "2",
+			"EPSILON": "0",
+			"GAMMA": [
+				"0.99"
+			],
+			"OTHER_GAMMA": "0.99"		
+		},	
+		{
+			"TRAIN_CASE": "5",
+			"TRAIN_AGENT_NUM": "2",
+			"EPSILON": "0",
+			"GAMMA": [
+				"0.99"
+			],
+			"OTHER_GAMMA": "0.75"		
+		},	
+		{
+			"TRAIN_CASE": "6",
+			"TRAIN_AGENT_NUM": "2",
+			"EPSILON": "0",
+			"GAMMA": [
+				"0.99"
+			],
+			"OTHER_GAMMA": "0.5"		
+		},	
+		{
+			"TRAIN_CASE": "7",
+			"TRAIN_AGENT_NUM": "2",
+			"EPSILON": "0",
+			"GAMMA": [
+				"0.99"
+			],
+			"OTHER_GAMMA": "0.25"		
+		},	
+		{
+			"TRAIN_CASE": "8",
+			"TRAIN_AGENT_NUM": "2",
+			"EPSILON": "0",
+			"GAMMA": [
+				"0.99"
+			],
+			"OTHER_GAMMA": "0.01"		
+		}	
 	]
 }
