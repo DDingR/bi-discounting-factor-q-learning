@@ -23,10 +23,13 @@ TRAIN_NAME = "test_train9";
 NN_NAME_LIST = [
     "0_1_0"
     "0_5_0"
+    "0_8_0"
+    "0_9_0"
     ];
 
 %%
 pst = ["start" "end"];
+rng = [0.25 1];
 
 for j = 1:1:size(NN_NAME_LIST, 1)
 
@@ -56,7 +59,7 @@ for j = 1:1:size(NN_NAME_LIST, 1)
     image(weight_mat, "CDataMapping","scaled")
     colormap(jet(256));
     colorbar
-%     clim([-0.5 0.5])
+    clim([-rng(k) rng(k)])
     title(pst(k))
 
     end
@@ -79,9 +82,9 @@ end
 % xlim([1,size(weight_mat, 2)])
 % ylim([1,size(weight_mat, 1)])
 
-%     {128×3   dlarray}
-%     {128×1   dlarray}
-%     {128×128 dlarray}
-%     {128×1   dlarray}
-%     { 41×128 dlarray}
-%     { 41×1   dlarray}
+% {128×3   dlarray}
+% {128×1   dlarray}
+% {128×128 dlarray}
+% {128×1   dlarray}
+% { 41×128 dlarray}
+% { 41×1   dlarray}
