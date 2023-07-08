@@ -1,0 +1,24 @@
+clear
+
+%%
+NN_NAME =  "onnx/test_train9/0_0_0_start"; 
+
+fprintf("Loading Neural Network NN_NAME: %s\n", NN_NAME)    
+nn_full = "./" + NN_NAME + ".onnx";
+nn_full = importONNXNetwork( ...
+nn_full,  TargetNetwork="dlnetwork", InputDataFormats="BC", OutputDataFormats="BC" ...
+);
+% analyzeNetwork(nn)  
+
+%%
+
+weights = nn_full.Learnables.Value;
+
+[node_num, input_num] = size(weights{1});
+output_num = size(weights{end}, 1);
+layer_num = length(weights);
+
+weight_list = zeros(node_num, input_num + node_num + output_num
+for j = length(weights)
+    weight_list = weights(1)
+end

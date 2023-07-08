@@ -116,6 +116,11 @@ if __name__ == "__main__":
     except:
         pass
 
+    try:
+        os.mkdir("./onnx/" + train_info['TRAIN_NAME'])
+    except:
+        pass
+
     TRAIN_REPEAT = int(train_info['TRAIN_REPEAT'])
     
     for j, train_case in enumerate(train_info_file["TRAIN_CASE"]):
