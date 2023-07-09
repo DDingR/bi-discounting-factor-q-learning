@@ -56,6 +56,9 @@ class DQNagent():
 
         self.steps_done = 0
 
+    def loadONNX(self, NN_PATH):
+        pass
+
     def saveONNX(self, episode, onnx_path):
         onnx_name = onnx_path + episode + ".onnx"
         self.policy_net.eval()
@@ -69,8 +72,32 @@ class DQNagent():
 
     def reset(self):
         self.state, _ = self.env.reset()
+        self.env.render()
+
         self.state = torch.tensor(self.state, dtype=torch.float32, device=self.device).unsqueeze(0)
         self.steps_done = self.steps_done + 1
+
+    def step(self):
+        action_index = self.select_action()    # pi
+
+        action = self.action_list[action_index]
+
+        action = torch.tensor(action).view(1)
+
+        observation, reward, terminated, truncated, _ = self.env.step(action) 
+
+        reward = torch.tensor([reward], device=self.device, dtype=torch.float64)
+        done = terminated or truncated
+
+        if terminated:
+            next_state = None
+        else:
+            next_state = torch.tensor(observation, dtype=torch.float32, device=self.device).unsqueeze(0)
+
+        # Move to the next state
+        self.state = next_state
+
+        return done, reward.cpu().item()
 
     def train(self, memory, agent):
         self.Transition = namedtuple('Transition',
