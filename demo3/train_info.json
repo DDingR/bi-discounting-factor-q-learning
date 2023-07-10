@@ -1,6 +1,6 @@
 {
 	"TRAIN_INFO": {
-		"TRAIN_NAME": "test_train10",
+		"TRAIN_NAME": "test_train11",
 		"ENV_NAME": "Pendulum-v1",
 
 		"EPISODE_NUM": "1000",
@@ -10,7 +10,7 @@
 
 		"MEMORY_SIZE": "10000",
 
-		"TRAIN_REPEAT": "10"
+		"TRAIN_REPEAT": "1"
 	},
 
 

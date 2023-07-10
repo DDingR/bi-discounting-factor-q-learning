@@ -1,7 +1,7 @@
 clear
 close all
 %%
-TRAIN_NAME = "test_train8";
+TRAIN_NAME = "test_train10";
 % TRAIN_NAME = "main_result";
 
 root_dir = "results/" + TRAIN_NAME;
@@ -95,9 +95,9 @@ legend(data_legend(1:end), "location", "southeast")
 % legend(data_legend(selected), "location", "southeast")
 
 %%
-plt_list = ["total", "selected"];
-
-for j = 1:1:2
-    plt = figure(j);
-    exportgraphics(plt,plt_list(j) +'.eps')
-end
+% plt_list = ["total", "selected"];
+% 
+% for j = 1:1:2
+%     plt = figure(j);
+%     exportgraphics(plt,plt_list(j) +'.eps')
+% end
