@@ -152,12 +152,14 @@ for j = 1:1:case_num
         
         x = step(x, u);
        
-	r = x'*Q*x + u'*R*u;
+	x_norm = [rem(x(1)+pi, 2*pi) - pi; x(2)];
+
+	r = x_norm'*Q*x_norm + u'*R*u;
 
         traj_list((1:2) + 2*(j-1), k) = x;
         u_list(j, k) = u;
         t_list(j, k) = t;
-	r_sum(j, 1) = r_sum(j, 1) + r;
+	r_sum(j, 1) = r_sum(j, 1) + r ;
     end
 end
 
