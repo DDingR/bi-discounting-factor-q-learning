@@ -1,7 +1,7 @@
 clear
 close all
 %%
-TRAIN_NAME = "test_train10";
+TRAIN_NAME = "test_train12";
 % TRAIN_NAME = "main_result";
 
 root_dir = "results/" + TRAIN_NAME;
@@ -18,7 +18,7 @@ for j = 3:root_num
 end
 
 %%
-rep_num = 10;
+rep_num = 1;
 [episode_num, case_num] = size(data_ori);
 case_num = case_num / rep_num;
 %% expected [1000 7 10]

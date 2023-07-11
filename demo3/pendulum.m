@@ -7,14 +7,15 @@ max_step = 200;
 x0 = [3;0];
 u0 = 0;
 
-Np = 20; Nc =Np;
+Np = 100; Nc =Np;
 
 TRAIN_NAME = "test_train12";
 
 NN_NAME = [
-    "LQR"
-    "MPC"    
-    "NLMPC"
+    "DP"
+%     "LQR"
+%     "MPC"    
+%     "NLMPC"
 %     "0_0_0_end"
 %     "1_0_0_end"
 %     "2_0_0_end";
@@ -25,9 +26,10 @@ NN_NAME = [
     ];
 
 data_legend = [
-    "LQR"
-    "MPC"
-    "NLMPC"
+    "DP"
+%     "LQR"
+%     "MPC"
+%     "NLMPC"
 %     "gamma 0"
 %     "gamma 0.25"
 %     "gamma 0.5"
@@ -45,8 +47,9 @@ case_num = size(NN_NAME, 1);
 traj_list = [repmat(x0, [case_num, 1]) zeros(2*case_num, max_step-1)];
 u_list = zeros(case_num, max_step);
 t_list = zeros(case_num, max_step);
+r_sum = zeros(case_num, 1);
 
-dt = 0.05;
+dt = 0.01;
 
 %% CONVENTIOANL CONTROL
 [A,B,Q,R] = pen();
@@ -72,8 +75,19 @@ mpcobj.OutputVariables(2).Max = +8;
 mpcobj.ManipulatedVariables.Min = -2;
 mpcobj.ManipulatedVariables.Max = +2;
 mpcobj.Weights.ManipulatedVariables = 1e-3;
-mpcobj.Weights.OutputVariables = [5 0.1];
+mpcobj.Weights.OutputVariables = [1 0.1];
 mpcobj.Weights.ManipulatedVariablesRate = 0;
+
+
+% Y = struct('Weight',[5,0.1],'Min',[-0,-0],'Max',[0,0], 'MinECR', [0,0], 'MaxECR', [0,0]);
+% U = struct('Min',-2,'Max',2);
+% setterminal(mpcobj,Y,U)
+
+
+% mpcobj.OutputVariables(1).MinECR(end) = 0;
+% mpcobj.OutputVariables(1).MaxECR(end) = 0;
+% mpcobj.OutputVariables(2).MinECR(end) = 0;
+% mpcobj.OutputVariables(2).MaxECR(end) = 0;
 
 % NLMPC ==============================
 
@@ -87,33 +101,41 @@ nlobj.OutputVariables(2).Max = +8;
 nlobj.ManipulatedVariables.Min = -2;
 nlobj.ManipulatedVariables.Max = +2;
 nlobj.Weights.ManipulatedVariables = 1e-3;
-nlobj.Weights.OutputVariables = [5 0.1];
+nlobj.Weights.OutputVariables = [1 0.1];
 nlobj.Weights.ManipulatedVariablesRate = 0;
-
 
 nlobj.Model.StateFcn = "stateFun";
 nlobj.Model.OutputFcn = @(x,u) x;
 validateFcns(nlobj, x0, u0);
 
+% DP ================================
+load res
+
 %% DEMOSTRAION
 
 for j = 1:1:case_num
     x = x0; u = u0;
-    if NN_NAME(j) ~= "LQR" && NN_NAME(j) ~= "MPC" && NN_NAME(j) ~= "NLMPC"
+    if NN_NAME(j) ~= "DP" && NN_NAME(j) ~= "LQR" && NN_NAME(j) ~= "MPC" && NN_NAME(j) ~= "NLMPC"
         NN_PATH = "./onnx/" + TRAIN_NAME + "/" + NN_NAME(j) + ".onnx";
         nn = importONNXNetwork(NN_PATH, TargetNetwork="dlnetwork", InputDataFormats="BC", OutputDataFormats="BC");
     end
+    r = 0;
 
     for k = 1:1:max_step
         tic
-        if NN_NAME(j) == "LQR"
+        if NN_NAME(j) == "DP"
+            u = res.u(k);
+        elseif NN_NAME(j) == "LQR"
             u = -K*x;
         elseif NN_NAME(j) == "MPC"
             [A,B,nominal] = adapPen(x, u);
             sysd = ss(A,B,eye(2),zeros(2,1),dt);
             sys = d2c(sysd);
 
-            u = mpcmoveAdaptive(mpcobj, mpcstate(mpcobj), sysd, nominal, x, [0;0]);
+%             opt = mpcmoveopt;
+%             opt.
+
+            [u, info] = mpcmoveAdaptive(mpcobj, mpcstate(mpcobj), sysd, nominal, x, [0;0]);
 %             u = mpcmove(mpcobj, mpcstate(mpcobj), x, [0;0]);
         elseif NN_NAME(j) =="NLMPC"
             u = nlmpcmove(nlobj, x, u);
@@ -124,13 +146,18 @@ for j = 1:1:case_num
         
         x = step(x, u);
        
+	r = x'*Q*x + u'*R*u;
+
         traj_list((1:2) + 2*(j-1), k) = x;
         u_list(j, k) = u;
         t_list(j, k) = t;
+	r_sum(j, 1) = r_sum(j, 1) + r;
     end
 end
 
 %% PLOT
+disp(r_sum)
+
 figure(1)
 subplot(2,1,1)
 for j = 1:1:case_num
@@ -181,7 +208,7 @@ end
 
 function [A,B,Q,R] = pen()
     g = 10.0;
-    dt = 0.05;
+    dt = 0.01;
     m = 1.0;
     l = 1.0;
 
@@ -200,7 +227,7 @@ function [A,B,nominal] = adapPen(x, u)
     th_dot = x(2);
 
     g = 10.0;
-    dt = 0.05;
+    dt = 0.01;
     m = 1.0;
     l = 1.0;
 
