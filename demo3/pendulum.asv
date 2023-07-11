@@ -7,36 +7,35 @@ max_step = 200;
 x0 = [3;0];
 u0 = 0;
 
-Np = 20; Nc =Np;
+Np = 100; Nc =Np;
 
 TRAIN_NAME = "test_train12";
 
 NN_NAME = [
     "DP"
 %     "LQR"
-    "MPC"    
+%     "MPC"    
 %     "NLMPC"
 %     "0_0_0_end"
 %     "1_0_0_end"
 %     "2_0_0_end";
 %     "3_0_0_end";
     "4_0_0_end";
-    "9_0_0_end";
+%     "9_0_0_end";
 
     ];
 
 data_legend = [
     "DP"
 %     "LQR"
-    "MPC"
+%     "MPC"
 %     "NLMPC"
 %     "gamma 0"
 %     "gamma 0.25"
 %     "gamma 0.5"
 %     "gamma 0.75"
     "gamma 0.99"    
-    "gamma 0.99, epsilon 0"    
-
+%     "gamma 0.99, epsilon 0"    
     ];
 
 selected = [1 2 7];
@@ -47,8 +46,9 @@ case_num = size(NN_NAME, 1);
 traj_list = [repmat(x0, [case_num, 1]) zeros(2*case_num, max_step-1)];
 u_list = zeros(case_num, max_step);
 t_list = zeros(case_num, max_step);
+r_sum = zeros(case_num, 1);
 
-dt = 0.05;
+dt = 0.01;
 
 %% CONVENTIOANL CONTROL
 [A,B,Q,R] = pen();
@@ -78,15 +78,15 @@ mpcobj.Weights.OutputVariables = [1 0.1];
 mpcobj.Weights.ManipulatedVariablesRate = 0;
 
 
-Y = struct('Weight',[5,0.1],'Min',[-0,-0],'Max',[0,0], 'MinECR');
+% Y = struct('Weight',[5,0.1],'Min',[-0,-0],'Max',[0,0], 'MinECR', [0,0], 'MaxECR', [0,0]);
 % U = struct('Min',-2,'Max',2);
 % setterminal(mpcobj,Y,U)
 
 
-mpcobj.OutputVariables(1).MinECR(end) = 0;
-mpcobj.OutputVariables(1).MaxECR(end) = 0;
-mpcobj.OutputVariables(2).MinECR(end) = 0;
-mpcobj.OutputVariables(2).MaxECR(end) = 0;
+% mpcobj.OutputVariables(1).MinECR(end) = 0;
+% mpcobj.OutputVariables(1).MaxECR(end) = 0;
+% mpcobj.OutputVariables(2).MinECR(end) = 0;
+% mpcobj.OutputVariables(2).MaxECR(end) = 0;
 
 % NLMPC ==============================
 
@@ -118,6 +118,7 @@ for j = 1:1:case_num
         NN_PATH = "./onnx/" + TRAIN_NAME + "/" + NN_NAME(j) + ".onnx";
         nn = importONNXNetwork(NN_PATH, TargetNetwork="dlnetwork", InputDataFormats="BC", OutputDataFormats="BC");
     end
+    r = 0;
 
     for k = 1:1:max_step
         tic
@@ -144,13 +145,18 @@ for j = 1:1:case_num
         
         x = step(x, u);
        
+	r = x'*Q*x + u'*R*u;
+
         traj_list((1:2) + 2*(j-1), k) = x;
         u_list(j, k) = u;
         t_list(j, k) = t;
+	r_sum(j, 1) = r_sum(j, 1) + r;
     end
 end
 
 %% PLOT
+disp(r_sum)
+
 figure(1)
 subplot(2,1,1)
 for j = 1:1:case_num
@@ -201,7 +207,7 @@ end
 
 function [A,B,Q,R] = pen()
     g = 10.0;
-    dt = 0.05;
+    dt = 0.01;
     m = 1.0;
     l = 1.0;
 
@@ -220,7 +226,7 @@ function [A,B,nominal] = adapPen(x, u)
     th_dot = x(2);
 
     g = 10.0;
-    dt = 0.05;
+    dt = 0.01;
     m = 1.0;
     l = 1.0;
 
@@ -242,7 +248,7 @@ function [A,B,nominal] = adapPen(x, u)
 end
 
 function u = select_action(x, nn)
-    x = [cos(x(1)); sin(x(1)); x(2)];
+%     x = [cos(x(1)); sin(x(1)); x(2)];
     u = predict(nn, dlarray(x', "BC"));
 %     u = find(u == max(extractdata(u)));
     [u, u_index] = max(u);

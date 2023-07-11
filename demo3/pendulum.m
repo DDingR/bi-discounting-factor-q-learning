@@ -9,19 +9,22 @@ u0 = 0;
 
 Np = 100; Nc =Np;
 
-TRAIN_NAME = "test_train12";
+TRAIN_NAME = "test_train13";
 
 NN_NAME = [
     "DP"
 %     "LQR"
 %     "MPC"    
 %     "NLMPC"
-%     "0_0_0_end"
-%     "1_0_0_end"
-%     "2_0_0_end";
-%     "3_0_0_end";
-    "4_0_0_end";
-    "9_0_0_end";
+     "0_0_0_end"
+     "1_0_0_end"
+     "2_0_0_end";
+     "3_0_0_end";
+   "4_0_0_end";
+     "5_0_0_end";
+     "6_0_0_end";
+     "7_0_0_end";
+     "8_0_0_end";
 
     ];
 
@@ -30,13 +33,16 @@ data_legend = [
 %     "LQR"
 %     "MPC"
 %     "NLMPC"
-%     "gamma 0"
-%     "gamma 0.25"
-%     "gamma 0.5"
-%     "gamma 0.75"
-    "gamma 0.99"    
-    "gamma 0.99, epsilon 0"    
-
+     "eps 0.99"
+     "eps 0.75"
+     "eps 0.5"
+     "eps 0.25"
+   "eps 0"    
+   "gamma 1.25"    
+   "gamma 1.5"    
+   "gamma 1.25 eps 0"    
+   "gamma 1.5 eps 0"    
+%     "gamma 0.99, epsilon 0"    
     ];
 
 selected = [1 2 7];
