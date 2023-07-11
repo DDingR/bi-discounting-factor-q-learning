@@ -130,7 +130,7 @@ for j = 1:1:case_num
     for k = 1:1:max_step
         tic
         if NN_NAME(j) == "DP"
-            u = res.u(k);
+            u = -res.u(k);
         elseif NN_NAME(j) == "LQR"
             u = -K*x;
         elseif NN_NAME(j) == "MPC"
