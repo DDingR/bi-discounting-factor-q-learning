@@ -1,0 +1,102 @@
+{
+	"TRAIN_INFO": {
+		"TRAIN_NAME": "test_train14",
+		"ENV_NAME": "Pendulum-v1",
+
+		"EPISODE_NUM": "1000",
+
+		"OBS_NUM": "3",
+		"ACT_QUANT_NUM": "10",
+
+		"MEMORY_SIZE": "10000",
+
+		"TRAIN_REPEAT": "1",
+
+		"EPSILON_LIMIT" : "0.2"
+	},
+
+
+	"TRAIN_CASE": [
+		{
+			"TRAIN_CASE": "eps0.99_gamma1",
+			"TRAIN_AGENT_NUM": "1",
+			"EPSILON": "0.99",
+			"GAMMA": [
+				"1"
+			],
+			"OTHER_GAMMA": "0.99"		
+		},
+        {
+			"TRAIN_CASE": "eps0.75_gamma1",
+			"TRAIN_AGENT_NUM": "1",
+			"EPSILON": "0.75",
+			"GAMMA": [
+				"1"
+			],
+			"OTHER_GAMMA": "0.99"		
+		},
+        {
+			"TRAIN_CASE": "eps0.50_gamma1",
+			"TRAIN_AGENT_NUM": "1",
+			"EPSILON": "0.50",
+			"GAMMA": [
+				"1"
+			],
+			"OTHER_GAMMA": "0.99"		
+		},
+        {
+			"TRAIN_CASE": "eps0.25_gamma1",
+			"TRAIN_AGENT_NUM": "1",
+			"EPSILON": "0.25",
+			"GAMMA": [
+				"1"
+			],
+			"OTHER_GAMMA": "0.99"		
+		},
+                {
+			"TRAIN_CASE": "eps0.00_gamma1",
+			"TRAIN_AGENT_NUM": "1",
+			"EPSILON": "0",
+			"GAMMA": [
+				"1"
+			],
+			"OTHER_GAMMA": "0.99"		
+		},
+                {
+			"TRAIN_CASE": "eps0.99_gamma0.75",
+			"TRAIN_AGENT_NUM": "1",
+			"EPSILON": "0.99",
+			"GAMMA": [
+				"0.75"
+			],
+			"OTHER_GAMMA": "0.99"		
+		},
+                        {
+			"TRAIN_CASE": "eps0.99_gamma0.50",
+			"TRAIN_AGENT_NUM": "1",
+			"EPSILON": "0.99",
+			"GAMMA": [
+				"0.50"
+			],
+			"OTHER_GAMMA": "0.99"		
+		},
+                        {
+			"TRAIN_CASE": "eps0.99_gamma0.25",
+			"TRAIN_AGENT_NUM": "1",
+			"EPSILON": "0.99",
+			"GAMMA": [
+				"0.25"
+			],
+			"OTHER_GAMMA": "0.99"		
+		},
+	                {
+			"TRAIN_CASE": "eps0.99_gamma0.00",
+			"TRAIN_AGENT_NUM": "1",
+			"EPSILON": "0.99",
+			"GAMMA": [
+				"0.00"
+			],
+			"OTHER_GAMMA": "0.99"		
+                    }
+    ]
+}

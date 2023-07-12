@@ -72,7 +72,7 @@ class DQNagent():
 
     def reset(self):
         self.state, _ = self.env.reset()
-        self.env.render()
+        #self.env.render()
 
         self.state = torch.tensor(self.state, dtype=torch.float32, device=self.device).unsqueeze(0)
         self.steps_done = self.steps_done + 1

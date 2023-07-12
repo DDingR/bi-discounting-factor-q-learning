@@ -9,43 +9,53 @@ u0 = 0;
 
 Np = 100; Nc =Np;
 
-TRAIN_NAME = "test_train13";
+TRAIN_NAME = "test_train14";
 
 NN_NAME = [
     "DP"
 %     "LQR"
 %     "MPC"    
 %     "NLMPC"
-     "0_0_0_end"
-     "1_0_0_end"
-     "2_0_0_end";
-     "3_0_0_end";
-   "4_0_0_end";
-     "5_0_0_end";
-     "6_0_0_end";
-     "7_0_0_end";
-     "8_0_0_end";
+     "eps0.99_gamma1_0_0_end"
+     "eps0.75_gamma1_0_0_end"
+     "eps0.50_gamma1_0_0_end"
+     "eps0.25_gamma1_0_0_end"
+     "eps0.00_gamma1_0_0_end"
+     "eps0.99_gamma0.75_0_0_end"
+     "eps0.99_gamma0.50_0_0_end"
+     "eps0.99_gamma0.25_0_0_end"
+     "eps0.99_gamma0.00_0_0_end"
+     "eps0.99_gamma0.975_0_0_end"
+     "eps0.99_gamma0.950_0_0_end"
+     "eps0.99_gamma0.925_0_0_end"
+     "eps0.99_gamma0.900_0_0_end"
 
-    ];
 
+     ];
+
+% data_legent = NN_NAME;
 data_legend = [
     "DP"
-%     "LQR"
-%     "MPC"
-%     "NLMPC"
-     "eps 0.99"
-     "eps 0.75"
-     "eps 0.5"
-     "eps 0.25"
-   "eps 0"    
-   "gamma 1.25"    
-   "gamma 1.5"    
-   "gamma 1.25 eps 0"    
-   "gamma 1.5 eps 0"    
-%     "gamma 0.99, epsilon 0"    
+     "eps0.99 gamma1"
+     "eps0.75 gamma1"
+     "eps0.50 gamma1"
+     "eps0.25 gamma1"
+     "eps0.00 gamma1"
+     "eps0.99 gamma0.75"
+     "eps0.99 gamma0.50"
+     "eps0.99 gamma0.25"
+     "eps0.99 gamma0.00"
+     "eps0.99 gamma0.975"
+     "eps0.99 gamma0.950"
+     "eps0.99 gamma0.925"
+     "eps0.99 gamma0.900"     
     ];
 
-selected = [1 2 7];
+%%
+plot_names = ["ALL CASES", "VARIOUS EXPLORATION", "VARIOUS GAMMA", "GAMMA from 0.9 to 1"];
+selected1 = [1 2 3 4 5 6];
+selected2 = [1 2 7 8 9 10];
+selected3 = [1 2 11 12 13 14];
 
 %% CONSTANTS
 case_num = size(NN_NAME, 1);
@@ -55,7 +65,7 @@ u_list = zeros(case_num, max_step);
 t_list = zeros(case_num, max_step);
 r_sum = zeros(case_num, 1);
 
-dt = 0.01;
+dt = 0.05;
 
 %% CONVENTIOANL CONTROL
 [A,B,Q,R] = pen();
@@ -73,16 +83,16 @@ sys = d2c(sysd);
 
 % mpcobj = mpc(sysd, Np, Nc);
 
-mpcobj = mpc(sysd, dt, Np, Nc);
-ms = mpcstate(mpcobj);
-
-mpcobj.OutputVariables(2).Min = -8;
-mpcobj.OutputVariables(2).Max = +8;
-mpcobj.ManipulatedVariables.Min = -2;
-mpcobj.ManipulatedVariables.Max = +2;
-mpcobj.Weights.ManipulatedVariables = 1e-3;
-mpcobj.Weights.OutputVariables = [1 0.1];
-mpcobj.Weights.ManipulatedVariablesRate = 0;
+% mpcobj = mpc(sysd, dt, Np, Nc);
+% ms = mpcstate(mpcobj);
+% 
+% mpcobj.OutputVariables(2).Min = -8;
+% mpcobj.OutputVariables(2).Max = +8;
+% mpcobj.ManipulatedVariables.Min = -2;
+% mpcobj.ManipulatedVariables.Max = +2;
+% mpcobj.Weights.ManipulatedVariables = 1e-3;
+% mpcobj.Weights.OutputVariables = [1 0.1];
+% mpcobj.Weights.ManipulatedVariablesRate = 0;
 
 
 % Y = struct('Weight',[5,0.1],'Min',[-0,-0],'Max',[0,0], 'MinECR', [0,0], 'MaxECR', [0,0]);
@@ -97,22 +107,22 @@ mpcobj.Weights.ManipulatedVariablesRate = 0;
 
 % NLMPC ==============================
 
-nlobj = nlmpc(2, 2, 1);
-
-nlobj.Ts = dt;
-nlobj.PredictionHorizon = Np;
-nlobj.ControlHorizon = Nc;
-nlobj.OutputVariables(2).Min = -8;
-nlobj.OutputVariables(2).Max = +8;
-nlobj.ManipulatedVariables.Min = -2;
-nlobj.ManipulatedVariables.Max = +2;
-nlobj.Weights.ManipulatedVariables = 1e-3;
-nlobj.Weights.OutputVariables = [1 0.1];
-nlobj.Weights.ManipulatedVariablesRate = 0;
-
-nlobj.Model.StateFcn = "stateFun";
-nlobj.Model.OutputFcn = @(x,u) x;
-validateFcns(nlobj, x0, u0);
+% nlobj = nlmpc(2, 2, 1);
+% 
+% nlobj.Ts = dt;
+% nlobj.PredictionHorizon = Np;
+% nlobj.ControlHorizon = Nc;
+% nlobj.OutputVariables(2).Min = -8;
+% nlobj.OutputVariables(2).Max = +8;
+% nlobj.ManipulatedVariables.Min = -2;
+% nlobj.ManipulatedVariables.Max = +2;
+% nlobj.Weights.ManipulatedVariables = 1e-3;
+% nlobj.Weights.OutputVariables = [1 0.1];
+% nlobj.Weights.ManipulatedVariablesRate = 0;
+% 
+% nlobj.Model.StateFcn = "stateFun";
+% nlobj.Model.OutputFcn = @(x,u) x;
+% validateFcns(nlobj, x0, u0);
 
 % DP ================================
 load res
@@ -137,9 +147,6 @@ for j = 1:1:case_num
             [A,B,nominal] = adapPen(x, u);
             sysd = ss(A,B,eye(2),zeros(2,1),dt);
             sys = d2c(sysd);
-
-%             opt = mpcmoveopt;
-%             opt.
 
             [u, info] = mpcmoveAdaptive(mpcobj, mpcstate(mpcobj), sysd, nominal, x, [0;0]);
 %             u = mpcmove(mpcobj, mpcstate(mpcobj), x, [0;0]);
@@ -166,12 +173,14 @@ end
 %% PLOT
 disp(r_sum)
 
+% ALL PLOT ========================================
 figure(1)
 subplot(2,1,1)
 for j = 1:1:case_num
     plot(traj_list((1) + 2*(j-1), :))
     hold on
 end
+title("\theta traj")
 legend(data_legend, "location", "southeast")
 
 % figure(2)
@@ -180,21 +189,67 @@ for j = 1:1:case_num
     plot(u_list(j, :))
     hold on
 end
+title("input")
 legend(data_legend, "location", "southeast")
+sgtitle(plot_names(1));
 
-% figure(3)
-% for j = selected
-%     plot(traj_list((1) + 2*(j-1), :))
-%     hold on
-% end
-% legend(data_legend(selected), "location", "southeast")
-% 
-% figure(4)
-% for j = selected
-%     plot(u_list(j, :))
-%     hold on
-% end
-% legend(data_legend(selected), "location", "southeast")
+% SELECTED1 PLOT ====================================
+figure(2)
+subplot(2,1,1)
+for j = selected1
+    plot(traj_list((1) + 2*(j-1), :))
+    hold on
+end
+title("\theta traj")
+legend(data_legend(selected1), "location", "southeast")
+
+subplot(2,1,2)
+for j = selected1
+    plot(u_list(j, :))
+    hold on
+end
+title("input")
+legend(data_legend(selected1), "location", "southeast")
+sgtitle(plot_names(2));
+
+% SELECTED2 PLOT ====================================
+figure(3)
+subplot(2,1,1)
+for j = selected2
+    plot(traj_list((1) + 2*(j-1), :))
+    hold on
+end
+title("\theta traj")
+legend(data_legend(selected2), "location", "southeast")
+
+subplot(2,1,2)
+for j = selected2
+    plot(u_list(j, :))
+    hold on
+end
+title("input")
+legend(data_legend(selected2), "location", "southeast")
+sgtitle(plot_names(3));
+
+% SELECTED3 PLOT ====================================
+figure(4)
+subplot(2,1,1)
+for j = selected3
+    plot(traj_list((1) + 2*(j-1), :))
+    hold on
+end
+title("\theta traj")
+legend(data_legend(selected3), "location", "southeast")
+
+subplot(2,1,2)
+for j = selected3
+    plot(u_list(j, :))
+    hold on
+end
+title("input")
+legend(data_legend(selected3), "location", "southeast")
+sgtitle(plot_names(4));
+
 
 %% LOCAL FUNCTIONS
 function x = step(x, u)
@@ -216,7 +271,7 @@ end
 
 function [A,B,Q,R] = pen()
     g = 10.0;
-    dt = 0.01;
+    dt = 0.05;
     m = 1.0;
     l = 1.0;
 
@@ -235,7 +290,7 @@ function [A,B,nominal] = adapPen(x, u)
     th_dot = x(2);
 
     g = 10.0;
-    dt = 0.01;
+    dt = 0.05;
     m = 1.0;
     l = 1.0;
 
