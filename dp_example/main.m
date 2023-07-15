@@ -1,4 +1,5 @@
 clear
+close all
 
 % Set problem, grid & options
 clear prb grd
@@ -12,14 +13,16 @@ grd.Nu{1}    = 41;
 grd.Un{1}.hi = 2;
 grd.Un{1}.lo = -2;
 grd.X0{1} = -3+2*pi;
+% grd.X0{1} = 3;
 grd.XN{1}.hi = 0.02;
 grd.XN{1}.lo = -0.02;
 grd.X0{2} = 0;
-grd.XN{2}.hi = 0.001;
-grd.XN{2}.lo = -0.001;
+grd.XN{2}.hi = 8;
+grd.XN{2}.lo = -8;
 
-prb.Ts = 0.01;
+prb.Ts = 0.05;
 prb.N  = 200;
+prb.W{1} = (1:prb.N)';
 
 options = dpm();
 options.MyInf = 1e+5;
@@ -44,3 +47,9 @@ hold off
 
 figure(2)
 plot(res.u)
+
+Cul_reward = -sum(res.reward)
+Cul_rewardDis = -sum(res.rewardDis)
+
+figure(3)
+plot(res.reward)

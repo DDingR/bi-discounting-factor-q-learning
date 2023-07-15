@@ -9,15 +9,16 @@ u0 = 0;
 
 SAVE_PLOT = 1;
 
-% Np = 100; Nc =Np;
+Np = 50; Nc =Np;
 
 TRAIN_NAME = "test_train14";
 
 NN_NAME = [
-    "DP"
+    "DP1"
+    "DP2"
 %     "LQR"
 %     "MPC"    
-%     "NLMPC"
+    "NLMPC"
      "eps0.99_gamma1_0_0_end"
      "eps0.75_gamma1_0_0_end"
      "eps0.50_gamma1_0_0_end"
@@ -35,27 +36,30 @@ NN_NAME = [
 
 % data_legent = NN_NAME;
 data_legend = [
-    "DP"
-     "eps0.99 gamma1"
-     "eps0.75 gamma1"
-     "eps0.50 gamma1"
-     "eps0.25 gamma1"
-     "eps0.00 gamma1"
-     "eps0.99 gamma0.75"
-     "eps0.99 gamma0.50"
-     "eps0.99 gamma0.25"
-     "eps0.99 gamma0.00"
-     "eps0.99 gamma0.975"
-     "eps0.99 gamma0.950"
-     "eps0.99 gamma0.925"
-     "eps0.99 gamma0.900"     
+    "DP to 2\pi"
+    "DP to 0"
+    "NLMPC"
+     "DQN (\epsilon: 0.99)"
+     "DQN (\epsilon: 0.75)"
+     "DQN (\epsilon: 0.50)"
+     "DQN (\epsilon: 0.25)"
+     "DQN (\epsilon: 0.00)"
+     "DQN (\gamma: 0.75)"
+     "DQN (\gamma: 0.50)"
+     "DQN (\gamma: 0.25)"
+     "DQN (\gamma: 0.00)"
+     "DQN (\gamma: 0.975)"
+     "DQN (\gamma: 0.950)"
+     "DQN (\gamma: 0.925)"
+     "DQN (\gamma: 0.900)"     
     ];
 
 %% SELECTED CASES
-plot_names = ["ALL CASES", "VARIOUS EXPLORATION", "VARIOUS GAMMA", "GAMMA from 0.9 to 1"];
-selected1 = [1 2 3 4 5 6];
-selected2 = [1 2 7 8 9 10];
-selected3 = [1 2 11 12 13 14];
+plot_names = ["CONVENTIONAL", "VARIOUS_EXPLORATION", "VARIOUS_GAMMA", "GAMMA_from_0.9_to_1"];
+selected0 = [1 2 3];
+selected1 = [1 4 5 6 7 8];
+selected2 = [1 4 9 10 11 12];
+selected3 = [1 4 13 14 15 16 ];
 
 %% CONSTANTS
 case_num = size(NN_NAME, 1);
@@ -77,12 +81,12 @@ tic
 [K,S,P] = lqr(sys,Q,R);
 lqr_t = toc;
 % MPC ================================
-[A,B,nominal] = adapPen(x0, u0);
-sysd = ss(A,B,eye(2),zeros(2,1),dt);
-sys = d2c(sysd);
-
+% [A,B,nominal] = adapPen(x0, u0);
+% sysd = ss(A,B,eye(2),zeros(2,1),dt);
+% sys = d2c(sysd);
+% 
 % mpcobj = mpc(sysd, Np, Nc);
-
+% 
 % mpcobj = mpc(sysd, dt, Np, Nc);
 % ms = mpcstate(mpcobj);
 % 
@@ -107,31 +111,33 @@ sys = d2c(sysd);
 
 % NLMPC ==============================
 
-% nlobj = nlmpc(2, 2, 1);
-% 
-% nlobj.Ts = dt;
-% nlobj.PredictionHorizon = Np;
-% nlobj.ControlHorizon = Nc;
-% nlobj.OutputVariables(2).Min = -8;
-% nlobj.OutputVariables(2).Max = +8;
-% nlobj.ManipulatedVariables.Min = -2;
-% nlobj.ManipulatedVariables.Max = +2;
-% nlobj.Weights.ManipulatedVariables = 1e-3;
-% nlobj.Weights.OutputVariables = [1 0.1];
-% nlobj.Weights.ManipulatedVariablesRate = 0;
-% 
-% nlobj.Model.StateFcn = "stateFun";
-% nlobj.Model.OutputFcn = @(x,u) x;
-% validateFcns(nlobj, x0, u0);
+nlobj = nlmpc(2, 2, 1);
+
+nlobj.Ts = dt;
+nlobj.PredictionHorizon = Np;
+nlobj.ControlHorizon = Nc;
+nlobj.OutputVariables(2).Min = -8;
+nlobj.OutputVariables(2).Max = +8;
+nlobj.ManipulatedVariables.Min = -2;
+nlobj.ManipulatedVariables.Max = +2;
+nlobj.Weights.ManipulatedVariables = 1e-3;
+nlobj.Weights.OutputVariables = [1 0.1];
+nlobj.Weights.ManipulatedVariablesRate = 0;
+
+nlobj.Model.StateFcn = "stateFun";
+nlobj.Model.OutputFcn = @(x,u) x;
+validateFcns(nlobj, x0, u0);
 
 % DP ================================
 load res
-
+u1 = res.u;
+load res3
+u2 = res.u;
 %% DEMOSTRAION
 
 for j = 1:1:case_num
     x = x0; u = u0;
-    if NN_NAME(j) ~= "DP" && NN_NAME(j) ~= "LQR" && NN_NAME(j) ~= "MPC" && NN_NAME(j) ~= "NLMPC"
+    if NN_NAME(j) ~= "DP1" && NN_NAME(j) ~= "DP2" && NN_NAME(j) ~= "LQR" && NN_NAME(j) ~= "MPC" && NN_NAME(j) ~= "NLMPC"
         NN_PATH = "./onnx/" + TRAIN_NAME + "/" + NN_NAME(j) + ".onnx";
         nn = importONNXNetwork(NN_PATH, TargetNetwork="dlnetwork", InputDataFormats="BC", OutputDataFormats="BC");
     end
@@ -139,8 +145,10 @@ for j = 1:1:case_num
 
     for k = 1:1:max_step
         tic
-        if NN_NAME(j) == "DP"
-            u = -res.u(k);
+        if NN_NAME(j) == "DP1"
+            u = -u1(k);
+        elseif NN_NAME(j) == "DP2"
+            u = u2(k);
         elseif NN_NAME(j) == "LQR"
             u = -K*x;
         elseif NN_NAME(j) == "MPC"
@@ -173,88 +181,137 @@ end
 %% PLOT
 disp(r_sum)
 
-% ALL PLOT ========================================
+% % ALL PLOT ========================================
+% figure(1)
+% tiledlayout(2,1);
+% nexttile
+% for j = 1:1:case_num
+%     plot(traj_list((1) + 2*(j-1), :))
+%     hold on
+% end
+% title("\theta traj", 'fontsize',11,'fontname', 'Times New Roman')
+% grid on
+% 
+% % figure(2)
+% nexttile
+% for j = 1:1:case_num
+%     plot(u_list(j, :))
+%     hold on
+% end
+% title("input", 'fontsize',11,'fontname', 'Times New Roman')
+% lgd = legend(data_legend, ...
+%     'fontsize',11,'fontname', 'Times New Roman');
+% lgd.Layout.Tile = 'south';
+% lgd.NumColumns = 3;
+% grid on
+% % sgtitle(plot_names(1));
+
+% SELECTED0 PLOT ====================================
 figure(1)
-subplot(2,1,1)
-for j = 1:1:case_num
+tiledlayout(2,1);
+nexttile
+for j = selected0
     plot(traj_list((1) + 2*(j-1), :))
     hold on
 end
-title("\theta traj")
-legend(data_legend, "location", "southeast")
+title("\theta traj", 'fontsize',11,'fontname', 'Times New Roman')
+grid on
 
-% figure(2)
-subplot(2,1,2)
-for j = 1:1:case_num
+nexttile
+for j = selected0
     plot(u_list(j, :))
     hold on
 end
-title("input")
-legend(data_legend, "location", "southeast")
-sgtitle(plot_names(1));
+title("input", 'fontsize',11,'fontname', 'Times New Roman')
+lgd = legend(data_legend(selected0), ...
+    'fontsize',11,'fontname', 'Times New Roman');
+lgd.Layout.Tile = 'south';
+lgd.NumColumns = 3;
+grid on
+% sgtitle(plot_names(2));
 
 % SELECTED1 PLOT ====================================
 figure(2)
-subplot(2,1,1)
+tiledlayout(2,1);
+nexttile
 for j = selected1
     plot(traj_list((1) + 2*(j-1), :))
     hold on
 end
-title("\theta traj")
-legend(data_legend(selected1), "location", "southeast")
+title("\theta traj", 'fontsize',11,'fontname', 'Times New Roman')
+grid on
 
-subplot(2,1,2)
+nexttile
 for j = selected1
     plot(u_list(j, :))
     hold on
 end
-title("input")
-legend(data_legend(selected1), "location", "southeast")
-sgtitle(plot_names(2));
+title("input", 'fontsize',11,'fontname', 'Times New Roman')
+lgd = legend(data_legend(selected1), ...
+    'fontsize',11,'fontname', 'Times New Roman');
+lgd.Layout.Tile = 'south';
+lgd.NumColumns = 3;
+grid on
+% sgtitle(plot_names(2));
 
 % SELECTED2 PLOT ====================================
 figure(3)
-subplot(2,1,1)
+tiledlayout(2,1);
+nexttile
 for j = selected2
     plot(traj_list((1) + 2*(j-1), :))
     hold on
 end
-title("\theta traj")
-legend(data_legend(selected2), "location", "southeast")
+title("\theta traj", 'fontsize',11,'fontname', 'Times New Roman')
+grid on
 
-subplot(2,1,2)
+nexttile
 for j = selected2
     plot(u_list(j, :))
     hold on
 end
-title("input")
-legend(data_legend(selected2), "location", "southeast")
-sgtitle(plot_names(3));
+title("input", 'fontsize',11,'fontname', 'Times New Roman')
+lgd = legend(data_legend(selected2), ...
+    'fontsize',11,'fontname', 'Times New Roman');
+lgd.Layout.Tile = 'south';
+lgd.NumColumns = 3;
+grid on
+% sgtitle(plot_names(3));
 
 % SELECTED3 PLOT ====================================
 figure(4)
-subplot(2,1,1)
+tiledlayout(2,1);
+nexttile
 for j = selected3
     plot(traj_list((1) + 2*(j-1), :))
     hold on
 end
-title("\theta traj")
-legend(data_legend(selected3), "location", "southeast")
+title("\theta traj", 'fontsize',11,'fontname', 'Times New Roman')
+grid on
 
-subplot(2,1,2)
+nexttile
 for j = selected3
     plot(u_list(j, :))
     hold on
 end
-title("input")
-legend(data_legend(selected3), "location", "southeast")
-sgtitle(plot_names(4));
+title("input", 'fontsize',11,'fontname', 'Times New Roman')
+lgd = legend(data_legend(selected3), ...
+    'fontsize',11,'fontname', 'Times New Roman');
+lgd.Layout.Tile = 'south';
+lgd.NumColumns = 3;
+grid on
+% sgtitle(plot_names(4));
 
 %% SAVE PLOTS IN CERTAIN FORMAT
 if SAVE_PLOT
+%     for j = 1:1:length(plot_names)
+%         saveas(figure(j), "fig/" + plot_names(j) + ".fig")
+%     end
+
     for j = 1:1:length(plot_names)
-        saveas(figure(j), "fig/" + plot_names(j) + ".fig")
-    end
+        plt = figure(j);
+        exportgraphics(plt, "fig/" + plot_names(j) +'.eps')
+    end  
 end
 
 %% LOCAL FUNCTIONS
@@ -326,3 +383,4 @@ function u = select_action(x, nn)
     action_list = (-20:1:20) / 10;
     u = action_list(u_index);
 end
+

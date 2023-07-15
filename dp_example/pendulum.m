@@ -21,8 +21,14 @@ in_x2 = (abs(X{2}) > 8);
 % Summarize infeasi_batle matrix
 I = (in_x2 ~= 0);
 % Calculate cost matrix (fuel mass flow)
-C{1}  = X{1}.^2*Q(1,1) + X{2}.^2*Q(2,2) + u.^2*R;
 
+x = mod(X{1} + pi, 2*pi) - pi;
+
+reward  = x.^2*Q(1,1) + X{2}.^2*Q(2,2) + u.^2*R;
+gamma = 0;
+% gamma = 1;
+C{1} = reward * gamma^(inp.W{1} - 1);
+C{1}
 if numel(find(I==0))==0
     keyboard
 end
@@ -32,6 +38,8 @@ end
 out.x1 = X{1};
 out.x2 = X{2};
 out.u = u;
+out.reward = reward;
+out.rewardDis = C{1};
 
 % REVISION HISTORY
 % =========================================================================
