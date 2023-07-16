@@ -37,7 +37,7 @@ NN_NAME = [
 
 % data_legent = NN_NAME;
 data_legend = [
-    "DP to 2\pi"
+    "DP"
 %     "DP to 0"
     "NLMPC"
      "DQN (\gamma: 1)"
