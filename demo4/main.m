@@ -7,15 +7,16 @@ max_step = 200;
 x0 = [3;0];
 u0 = 0;
 
+PLOT = 1;
 SAVE_PLOT = 1;
 
-Np = 50; Nc =Np;
+Np = 20; Nc =Np;
 
 TRAIN_NAME = "test_train14";
 
 NN_NAME = [
     "DP1"
-    "DP2"
+%     "DP2"
 %     "LQR"
 %     "MPC"    
     "NLMPC"
@@ -37,9 +38,9 @@ NN_NAME = [
 % data_legent = NN_NAME;
 data_legend = [
     "DP to 2\pi"
-    "DP to 0"
+%     "DP to 0"
     "NLMPC"
-     "DQN (\epsilon: 0.99)"
+     "DQN (\gamma: 1)"
      "DQN (\epsilon: 0.75)"
      "DQN (\epsilon: 0.50)"
      "DQN (\epsilon: 0.25)"
@@ -51,15 +52,18 @@ data_legend = [
      "DQN (\gamma: 0.975)"
      "DQN (\gamma: 0.950)"
      "DQN (\gamma: 0.925)"
-     "DQN (\gamma: 0.900)"     
+     "DQN (\gamma: 0.900)"   
+
+     "DQN (\epsilon: 0.99)"
+     
     ];
 
 %% SELECTED CASES
 plot_names = ["CONVENTIONAL", "VARIOUS_EXPLORATION", "VARIOUS_GAMMA", "GAMMA_from_0.9_to_1"];
-selected0 = [1 2 3];
-selected1 = [1 4 5 6 7 8];
-selected2 = [1 4 9 10 11 12];
-selected3 = [1 4 13 14 15 16 ];
+selected0 = [1 2];
+selected1 = [1 3 4 5 6 7];
+selected2 = [1 3 4 9 10 11];
+selected3 = [1 3 4 13 14 15];
 
 %% CONSTANTS
 case_num = size(NN_NAME, 1);
@@ -128,6 +132,7 @@ nlobj.Model.StateFcn = "stateFun";
 nlobj.Model.OutputFcn = @(x,u) x;
 validateFcns(nlobj, x0, u0);
 
+nlobj.Optimization.CustomCostFcn = "optFun"
 % DP ================================
 load res
 u1 = res.u;
@@ -179,139 +184,19 @@ for j = 1:1:case_num
 end
 
 %% PLOT
-disp(r_sum)
+data.plot_names = plot_names;
+data.SAVE_PLOT = SAVE_PLOT;
+data.r_sum = r_sum;
+data.data_legend = data_legend;
+data.traj_list = traj_list;
+data.selected0 = selected0;
+data.selected1 = selected1;
+data.selected2 = selected2;
+data.selected3 = selected3;
+data.u_list = u_list;
 
-% % ALL PLOT ========================================
-% figure(1)
-% tiledlayout(2,1);
-% nexttile
-% for j = 1:1:case_num
-%     plot(traj_list((1) + 2*(j-1), :))
-%     hold on
-% end
-% title("\theta traj", 'fontsize',11,'fontname', 'Times New Roman')
-% grid on
-% 
-% % figure(2)
-% nexttile
-% for j = 1:1:case_num
-%     plot(u_list(j, :))
-%     hold on
-% end
-% title("input", 'fontsize',11,'fontname', 'Times New Roman')
-% lgd = legend(data_legend, ...
-%     'fontsize',11,'fontname', 'Times New Roman');
-% lgd.Layout.Tile = 'south';
-% lgd.NumColumns = 3;
-% grid on
-% % sgtitle(plot_names(1));
-
-% SELECTED0 PLOT ====================================
-figure(1)
-tiledlayout(2,1);
-nexttile
-for j = selected0
-    plot(traj_list((1) + 2*(j-1), :))
-    hold on
-end
-title("\theta traj", 'fontsize',11,'fontname', 'Times New Roman')
-grid on
-
-nexttile
-for j = selected0
-    plot(u_list(j, :))
-    hold on
-end
-title("input", 'fontsize',11,'fontname', 'Times New Roman')
-lgd = legend(data_legend(selected0), ...
-    'fontsize',11,'fontname', 'Times New Roman');
-lgd.Layout.Tile = 'south';
-lgd.NumColumns = 3;
-grid on
-% sgtitle(plot_names(2));
-
-% SELECTED1 PLOT ====================================
-figure(2)
-tiledlayout(2,1);
-nexttile
-for j = selected1
-    plot(traj_list((1) + 2*(j-1), :))
-    hold on
-end
-title("\theta traj", 'fontsize',11,'fontname', 'Times New Roman')
-grid on
-
-nexttile
-for j = selected1
-    plot(u_list(j, :))
-    hold on
-end
-title("input", 'fontsize',11,'fontname', 'Times New Roman')
-lgd = legend(data_legend(selected1), ...
-    'fontsize',11,'fontname', 'Times New Roman');
-lgd.Layout.Tile = 'south';
-lgd.NumColumns = 3;
-grid on
-% sgtitle(plot_names(2));
-
-% SELECTED2 PLOT ====================================
-figure(3)
-tiledlayout(2,1);
-nexttile
-for j = selected2
-    plot(traj_list((1) + 2*(j-1), :))
-    hold on
-end
-title("\theta traj", 'fontsize',11,'fontname', 'Times New Roman')
-grid on
-
-nexttile
-for j = selected2
-    plot(u_list(j, :))
-    hold on
-end
-title("input", 'fontsize',11,'fontname', 'Times New Roman')
-lgd = legend(data_legend(selected2), ...
-    'fontsize',11,'fontname', 'Times New Roman');
-lgd.Layout.Tile = 'south';
-lgd.NumColumns = 3;
-grid on
-% sgtitle(plot_names(3));
-
-% SELECTED3 PLOT ====================================
-figure(4)
-tiledlayout(2,1);
-nexttile
-for j = selected3
-    plot(traj_list((1) + 2*(j-1), :))
-    hold on
-end
-title("\theta traj", 'fontsize',11,'fontname', 'Times New Roman')
-grid on
-
-nexttile
-for j = selected3
-    plot(u_list(j, :))
-    hold on
-end
-title("input", 'fontsize',11,'fontname', 'Times New Roman')
-lgd = legend(data_legend(selected3), ...
-    'fontsize',11,'fontname', 'Times New Roman');
-lgd.Layout.Tile = 'south';
-lgd.NumColumns = 3;
-grid on
-% sgtitle(plot_names(4));
-
-%% SAVE PLOTS IN CERTAIN FORMAT
-if SAVE_PLOT
-%     for j = 1:1:length(plot_names)
-%         saveas(figure(j), "fig/" + plot_names(j) + ".fig")
-%     end
-
-    for j = 1:1:length(plot_names)
-        plt = figure(j);
-        exportgraphics(plt, "fig/" + plot_names(j) +'.eps')
-    end  
+if PLOT
+    main_plotter(data);
 end
 
 %% LOCAL FUNCTIONS

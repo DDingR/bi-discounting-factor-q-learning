@@ -17,16 +17,7 @@
 
 
 	"TRAIN_CASE": [
-                {
-			"TRAIN_CASE": "eps0.99_gamma0.975",
-			"TRAIN_AGENT_NUM": "1",
-			"EPSILON": "0.99",
-			"GAMMA": [
-				"0.975"
-			],
-			"OTHER_GAMMA": "0.99"		
-		},
-                        {
+        {
 			"TRAIN_CASE": "eps0.99_gamma0.950",
 			"TRAIN_AGENT_NUM": "1",
 			"EPSILON": "0.99",
@@ -34,24 +25,6 @@
 				"0.950"
 			],
 			"OTHER_GAMMA": "0.99"		
-		},
-                        {
-			"TRAIN_CASE": "eps0.99_gamma0.925",
-			"TRAIN_AGENT_NUM": "1",
-			"EPSILON": "0.99",
-			"GAMMA": [
-				"0.925"
-			],
-			"OTHER_GAMMA": "0.99"		
-		},
-	                {
-			"TRAIN_CASE": "eps0.99_gamma0.900",
-			"TRAIN_AGENT_NUM": "1",
-			"EPSILON": "0.99",
-			"GAMMA": [
-				"0.900"
-			],
-			"OTHER_GAMMA": "0.99"		
-                    }
+        }
     ]
 }
