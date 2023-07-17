@@ -18,8 +18,8 @@ NN_NAME = [
     "DP1"
 %     "DP2"
 %     "LQR"
-%     "MPC"    
-    "NLMPC"
+    "MPC"    
+%     "NLMPC"
      "eps0.99_gamma1_0_0_end"
      "eps0.75_gamma1_0_0_end"
      "eps0.50_gamma1_0_0_end"
@@ -39,7 +39,7 @@ NN_NAME = [
 data_legend = [
     "DP"
 %     "DP to 0"
-    "NLMPC"
+    "MPC"
      "DQN (\gamma: 1)"
      "DQN (\epsilon: 0.75)"
      "DQN (\epsilon: 0.50)"
@@ -85,22 +85,22 @@ tic
 [K,S,P] = lqr(sys,Q,R);
 lqr_t = toc;
 % MPC ================================
-% [A,B,nominal] = adapPen(x0, u0);
-% sysd = ss(A,B,eye(2),zeros(2,1),dt);
-% sys = d2c(sysd);
-% 
-% mpcobj = mpc(sysd, Np, Nc);
-% 
-% mpcobj = mpc(sysd, dt, Np, Nc);
-% ms = mpcstate(mpcobj);
-% 
-% mpcobj.OutputVariables(2).Min = -8;
-% mpcobj.OutputVariables(2).Max = +8;
-% mpcobj.ManipulatedVariables.Min = -2;
-% mpcobj.ManipulatedVariables.Max = +2;
-% mpcobj.Weights.ManipulatedVariables = 1e-3;
-% mpcobj.Weights.OutputVariables = [1 0.1];
-% mpcobj.Weights.ManipulatedVariablesRate = 0;
+[A,B,nominal] = adapPen(x0, u0);
+sysd = ss(A,B,eye(2),zeros(2,1),dt);
+sys = d2c(sysd);
+
+mpcobj = mpc(sysd, Np, Nc);
+
+mpcobj = mpc(sysd, dt, Np, Nc);
+ms = mpcstate(mpcobj);
+
+mpcobj.OutputVariables(2).Min = -8;
+mpcobj.OutputVariables(2).Max = +8;
+mpcobj.ManipulatedVariables.Min = -2;
+mpcobj.ManipulatedVariables.Max = +2;
+mpcobj.Weights.ManipulatedVariables = 1e-3;
+mpcobj.Weights.OutputVariables = [1 0.1];
+mpcobj.Weights.ManipulatedVariablesRate = 0;
 
 
 % Y = struct('Weight',[5,0.1],'Min',[-0,-0],'Max',[0,0], 'MinECR', [0,0], 'MaxECR', [0,0]);
