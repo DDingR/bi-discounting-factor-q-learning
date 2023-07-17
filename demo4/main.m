@@ -10,7 +10,7 @@ u0 = 0;
 PLOT = 1;
 SAVE_PLOT = 1;
 
-Np = 20; Nc =Np;
+Np = 50; Nc =Np;
 
 TRAIN_NAME = "test_train14";
 
